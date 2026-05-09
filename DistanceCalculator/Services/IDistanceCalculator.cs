@@ -4,5 +4,5 @@ namespace DistanceCalculator.Services;
 
 public interface IDistanceCalculator
 {
-    double Calculate(DistanceRequest request);
+    Task<double> CalculateAsync(DistanceRequest request, CancellationToken cancellationToken = default);
 }

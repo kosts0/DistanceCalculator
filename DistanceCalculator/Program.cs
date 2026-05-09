@@ -1,9 +1,9 @@
 using System.Text.Json;
+using DistanceCalculator.Options;
 using DistanceCalculator.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Logging.ClearProviders();
 builder.Logging.AddJsonConsole(options =>
 {
     options.IncludeScopes = true;
@@ -12,15 +12,27 @@ builder.Logging.AddJsonConsole(options =>
     options.JsonWriterOptions = new JsonWriterOptions { Indented = false };
 });
 
-builder.Services.AddControllers();
+builder.Services.Configure<TwoGisOptions>(builder.Configuration.GetSection(TwoGisOptions.SectionName));
+
+builder.Services.AddSingleton<HaversineDistanceCalculator>();
+
+builder.Services.AddSingleton<TwoGisDistanceCalculator>();
+builder.Services.AddHttpClient<TwoGisDistanceCalculator>();
+
+builder.Services.AddSingleton<ICalculatorFactory, CalculatorFactory>();
+
+builder.Services.AddScoped<IDistanceService, DistanceService>();
+
+builder.Services.AddControllers()
+    .AddJsonOptions(options =>
+    {
+        options.JsonSerializerOptions.Converters.Add(new System.Text.Json.Serialization.JsonStringEnumConverter());
+    });
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c =>
 {
     c.SchemaFilter<DistanceCalculator.Swagger.DistanceRequestExampleFilter>();
 });
-
-builder.Services.AddSingleton<IDistanceCalculator, HaversineDistanceCalculator>();
-builder.Services.AddScoped<IDistanceService, DistanceService>();
 
 var app = builder.Build();
 

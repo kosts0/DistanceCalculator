@@ -6,7 +6,7 @@ public class HaversineDistanceCalculator : IDistanceCalculator
 {
     private const double EarthRadiusKm = 6371.0;
 
-    public double Calculate(DistanceRequest request)
+    public Task<double> CalculateAsync(DistanceRequest request, CancellationToken cancellationToken = default)
     {
         var latDistance = ToRadians(request.PointB.Latitude - request.PointA.Latitude);
         var lonDistance = ToRadians(request.PointB.Longitude - request.PointA.Longitude);
@@ -20,7 +20,7 @@ public class HaversineDistanceCalculator : IDistanceCalculator
 
         var c = 2 * Math.Atan2(Math.Sqrt(a), Math.Sqrt(1 - a));
 
-        return EarthRadiusKm * c;
+        return Task.FromResult(EarthRadiusKm * c);
     }
 
     private static double ToRadians(double degrees) => degrees * Math.PI / 180.0;

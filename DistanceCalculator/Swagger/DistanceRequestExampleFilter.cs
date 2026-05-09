@@ -16,13 +16,13 @@ public class DistanceRequestExampleFilter : ISchemaFilter
         {
             ["pointA"] = new OpenApiObject
             {
-                ["latitude"] = new OpenApiDouble(55.7558),
-                ["longitude"] = new OpenApiDouble(37.6173)
+                ["latitude"] = new OpenApiDouble(55.594692), 
+                ["longitude"] = new OpenApiDouble(37.427561)
             },
             ["pointB"] = new OpenApiObject
             {
-                ["latitude"] = new OpenApiDouble(59.9343),
-                ["longitude"] = new OpenApiDouble(30.3351)
+                ["latitude"] = new OpenApiDouble(55.762242),
+                ["longitude"] = new OpenApiDouble(37.404249)
             }
         };
     }

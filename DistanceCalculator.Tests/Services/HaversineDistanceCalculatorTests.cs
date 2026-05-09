@@ -8,7 +8,7 @@ public class HaversineDistanceCalculatorTests
     private readonly HaversineDistanceCalculator _sut = new();
 
     [Test]
-    public void Calculate_MoscowToSaintPetersburg_ReturnsAbout633Km()
+    public async Task Calculate_MoscowToSaintPetersburg_ReturnsAbout633Km()
     {
         var request = new DistanceRequest
         {
@@ -16,13 +16,13 @@ public class HaversineDistanceCalculatorTests
             PointB = new PointDto { Latitude = 59.9343, Longitude = 30.3351 }
         };
 
-        var result = _sut.Calculate(request);
+        var result = await _sut.CalculateAsync(request);
 
         Assert.That(result, Is.EqualTo(633).Within(10));
     }
 
     [Test]
-    public void Calculate_SamePoint_ReturnsZero()
+    public async Task Calculate_SamePoint_ReturnsZero()
     {
         var request = new DistanceRequest
         {
@@ -30,13 +30,13 @@ public class HaversineDistanceCalculatorTests
             PointB = new PointDto { Latitude = 55.7558, Longitude = 37.6173 }
         };
 
-        var result = _sut.Calculate(request);
+        var result = await _sut.CalculateAsync(request);
 
         Assert.That(result, Is.EqualTo(0));
     }
 
     [Test]
-    public void Calculate_NorthPoleToSouthPole_ReturnsHalfCircumference()
+    public async Task Calculate_NorthPoleToSouthPole_ReturnsHalfCircumference()
     {
         var request = new DistanceRequest
         {
@@ -44,7 +44,7 @@ public class HaversineDistanceCalculatorTests
             PointB = new PointDto { Latitude = -90, Longitude = 0 }
         };
 
-        var result = _sut.Calculate(request);
+        var result = await _sut.CalculateAsync(request);
         var halfCircumference = Math.PI * 6371;
 
         Assert.That(result, Is.EqualTo(halfCircumference).Within(1));

@@ -1,4 +1,5 @@
 using DistanceCalculator.Dtos;
+using DistanceCalculator.Enums;
 using DistanceCalculator.Services;
 using Microsoft.Extensions.Logging;
 
@@ -10,10 +11,14 @@ public class DistanceServiceTests
     public async Task CalculateDistanceAsync_ReturnsCorrectResponse()
     {
         var mockCalculator = new Mock<IDistanceCalculator>();
-        mockCalculator.Setup(c => c.Calculate(It.IsAny<DistanceRequest>())).Returns(100.0);
+        mockCalculator.Setup(c => c.CalculateAsync(It.IsAny<DistanceRequest>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync(100.0);
+
+        var mockFactory = new Mock<ICalculatorFactory>();
+        mockFactory.Setup(f => f.GetCalculator(CalculatorType.Haversine)).Returns(mockCalculator.Object);
 
         var mockLogger = new Mock<ILogger<DistanceService>>();
-        var sut = new DistanceService(mockCalculator.Object, mockLogger.Object);
+        var sut = new DistanceService(mockFactory.Object, mockLogger.Object);
 
         var request = new DistanceRequest
         {
@@ -21,9 +26,9 @@ public class DistanceServiceTests
             PointB = new PointDto { Latitude = 59.9343, Longitude = 30.3351 }
         };
 
-        var result = await sut.CalculateDistanceAsync(request);
+        var (distance, calcType) = await sut.CalculateDistanceAsync(request);
 
-        Assert.That(result, Is.Not.Null);
-        Assert.That(result.DistanceInKm, Is.EqualTo(100.0));
+        Assert.That(distance, Is.EqualTo(100.0));
+        Assert.That(calcType, Is.EqualTo(CalculatorType.Haversine));
     }
 }
